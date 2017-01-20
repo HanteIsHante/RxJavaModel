@@ -7,9 +7,6 @@ import android.widget.TextView;
 
 import com.example.hante.rxjavamodel.model.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observer;
@@ -47,14 +44,19 @@ public class AcceptMesActivity extends AppCompatActivity {
             public void onNext (String s) {
                 Log.d(TAG, "onNext: 输出内容" + s);
 
-                List<String> li = new ArrayList<>();
-                li.add(s);
+//                List<String> li = new ArrayList<>();
+//                lid(s);
+                acceptMessage.setText(s);
+//                try {
+//                    Thread.sleep(3000);
+//                } catch(InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
-                acceptMessage.setText(li.toString());
             }
 
             @Override
-            public void onError (Throwable e) {
+           public void onError (Throwable e) {
                 Log.d(TAG, "onNext: ERROR 错误信息" + e);
             }
 

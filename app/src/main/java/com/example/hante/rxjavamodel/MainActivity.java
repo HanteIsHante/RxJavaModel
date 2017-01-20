@@ -163,6 +163,11 @@ public class MainActivity extends AppCompatActivity {
             public ObservableSource<? extends String> call () throws Exception {
                 return Observable.just("Hello 大魔王");
             }
+        }).map(new Function<String, String>() {
+            @Override
+            public String apply (String s) throws Exception {
+                return null;
+            }
         });
 
         //interval( )方式 创建一个按固定时间间隔发射整数序列的Observable，可用作定时器。即按照固定2秒一次调用onNext()方法。
@@ -273,6 +278,53 @@ public class MainActivity extends AppCompatActivity {
                 e.onNext(u);
             }
         });
+
+//        ================
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe (ObservableEmitter<Object> e) throws Exception {
+
+            }
+        }).subscribe(new Observer<Object>() {
+            @Override
+            public void onSubscribe (Disposable d) {
+
+            }
+
+            @Override
+            public void onNext (Object o) {
+
+            }
+
+            @Override
+            public void onError (Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete () {
+
+            }
+        });
+//        ===============
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe (ObservableEmitter<Object> e) throws Exception {
+
+            }
+        }).subscribe(new Consumer<Object>() {
+            @Override
+            public void accept (Object o) throws Exception {
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept (Throwable throwable) throws Exception {
+
+            }
+        });
+
+
     }
 
 
