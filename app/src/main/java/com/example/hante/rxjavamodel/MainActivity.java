@@ -326,7 +326,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
+//=========================4
+        Observable.just("YOU ARE PIG")
+                .observeOn(Schedulers.newThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept (String s) throws Exception {
+                        Log.d(TAG, "accept: 输出" + s);
+                    }
+                });
 
     }
 
