@@ -3,6 +3,7 @@ package com.example.hante.rxjavamodel;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     @BindView(R.id.to_next)
     Button toNext;
+    @BindView(R.id.home_toolbar)
+    Toolbar homeToolbar;
 
 
     private Observer<String> observer;
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        homeToolbar.setTitle("Home");
 
         observable();
         observer();
@@ -163,6 +166,11 @@ public class MainActivity extends AppCompatActivity {
             public ObservableSource<? extends String> call () throws Exception {
                 return Observable.just("Hello 大魔王");
             }
+        }).map(new Function<String, String>() {
+            @Override
+            public String apply (String s) throws Exception {
+                return null;
+            }
         });
 
         //interval( )方式 创建一个按固定时间间隔发射整数序列的Observable，可用作定时器。即按照固定2秒一次调用onNext()方法。
@@ -266,13 +274,69 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(getSubscriber);
 // ======================================================================
 
-        obsUser =  Observable.create(new ObservableOnSubscribe<User>() {
+        obsUser = Observable.create(new ObservableOnSubscribe<User>() {
             @Override
             public void subscribe (ObservableEmitter<User> e) throws Exception {
                 User u = new User("hante", 110, 10);
                 e.onNext(u);
             }
         });
+
+//        ================
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe (ObservableEmitter<Object> e) throws Exception {
+
+            }
+        }).subscribe(new Observer<Object>() {
+            @Override
+            public void onSubscribe (Disposable d) {
+
+            }
+
+            @Override
+            public void onNext (Object o) {
+
+            }
+
+            @Override
+            public void onError (Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete () {
+
+            }
+        });
+//        ===============
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe (ObservableEmitter<Object> e) throws Exception {
+
+            }
+        }).subscribe(new Consumer<Object>() {
+            @Override
+            public void accept (Object o) throws Exception {
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept (Throwable throwable) throws Exception {
+
+            }
+        });
+//=========================4
+        Observable.just("YOU ARE PIG")
+                .observeOn(Schedulers.newThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept (String s) throws Exception {
+                        Log.d(TAG, "accept: 输出" + s);
+                    }
+                });
+
     }
 
 
