@@ -3,6 +3,7 @@ package com.example.hante.rxjavamodel;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     @BindView(R.id.to_next)
     Button toNext;
+    @BindView(R.id.home_toolbar)
+    Toolbar homeToolbar;
 
 
     private Observer<String> observer;
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        homeToolbar.setTitle("Home");
 
         observable();
         observer();
@@ -271,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(getSubscriber);
 // ======================================================================
 
-        obsUser =  Observable.create(new ObservableOnSubscribe<User>() {
+        obsUser = Observable.create(new ObservableOnSubscribe<User>() {
             @Override
             public void subscribe (ObservableEmitter<User> e) throws Exception {
                 User u = new User("hante", 110, 10);
