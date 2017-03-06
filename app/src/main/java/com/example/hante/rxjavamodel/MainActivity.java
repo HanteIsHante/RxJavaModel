@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.hante.rxjavamodel.model.User;
+import com.example.hante.rxjavamodel.rxbus.RxBusMsg;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -31,6 +33,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -39,11 +42,13 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    @BindView(R.id.to_next)
-    Button toNext;
     @BindView(R.id.home_toolbar)
     Toolbar homeToolbar;
-
+    @BindView(R.id.to_next)
+    Button toNext;
+    @BindView(R.id.rxBus_button)
+    Button rxBusButton;
+    private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
     private Observer<String> observer;
     private Observer<Integer> observerInteger;
@@ -60,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         homeToolbar.setTitle("Home");
-
+        RxBusMsg.getDefault().post(new User("汉庭", 222, 110));
         observable();
         observer();
         observable.subscribe(observer);
@@ -340,10 +345,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @OnClick(R.id.to_next)
-    public void onClick () {
-        Toast.makeText(this, "跳转", Toast.LENGTH_SHORT).show();
-        Intent ito = new Intent(getApplicationContext(), AcceptMesActivity.class);
-        startActivity(ito);
+
+    @OnClick({R.id.to_next, R.id.rxBus_button})
+    public void onClick (View view) {
+        switch(view.getId()) {
+            case R.id.to_next:
+                Toast.makeText(this, "跳转", Toast.LENGTH_SHORT).show();
+                Intent ito = new Intent(getApplicationContext(), AcceptMesActivity.class);
+                startActivity(ito);
+                break;
+            case R.id.rxBus_button:
+                if(!RxBusMsg.getDefault().hasSubscribers()) {
+                    mCompositeDisposable.add(RxBusMsg.getDefault().toFlowable(User.class)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(user -> {
+                                Log.d(TAG, " accept RxBus Post Message onCreate: " + user.toString());
+                                rxBusButton.setText(user.toString());
+                            })
+                    );
+                }
+                Intent it = new Intent(getApplicationContext(), RxBusActivity.class);
+                startActivity(it);
+                break;
+        }
+    }
+
+    @Override
+    protected void onDestroy () {
+        super.onDestroy();
+        mCompositeDisposable.dispose();
     }
 }
